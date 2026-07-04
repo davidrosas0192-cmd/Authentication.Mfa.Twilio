@@ -1,6 +1,6 @@
 namespace Authentication.Mfa.Twilio.Services.Implementations;
 
-public class ITwilioVerifyService
+public class PasswordHasherService
 {
     
 }
