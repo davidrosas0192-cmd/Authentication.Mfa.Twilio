@@ -1,0 +1,6 @@
+@Authentication.Mfa.Twilio_HostAddress = http://localhost:5228
+
+GET {{Authentication.Mfa.Twilio_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
