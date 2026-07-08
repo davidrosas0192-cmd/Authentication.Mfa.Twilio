@@ -24,4 +24,8 @@
     <Folder Include="Data\Repository\Interfaces\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="tests/**/*.cs" />
+  </ItemGroup>
+
 </Project>

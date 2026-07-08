@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Authentication.Mfa.Twilio")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7b2af8c14a15c2b538e6fe9245dd1a9369f0610d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f0a7dc42d663682ed2d670c38c3f947522b5793c")]
 [assembly: System.Reflection.AssemblyProductAttribute("Authentication.Mfa.Twilio")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Authentication.Mfa.Twilio")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
