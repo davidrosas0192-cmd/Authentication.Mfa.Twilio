@@ -1,6 +1,8 @@
+using Authentication.Mfa.Twilio.Common;
+
 namespace Authentication.Mfa.Twilio.Services.Interfaces;
 
 public interface ITwilioVerifyService
 {
-    Task SendOtpAsync(string target, string code, CancellationToken cancellationToken);
+    Task<Result> SendOtpAsync(string target, string code, CancellationToken cancellationToken);
 }

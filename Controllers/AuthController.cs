@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Authentication.Mfa.Twilio.Data;
 using Authentication.Mfa.Twilio.Data.Entities;
 using Authentication.Mfa.Twilio.DTOs;
@@ -66,8 +65,19 @@ public class AuthController : ControllerBase
 
         if (user.IsMfaEnabled)
         {
-            var challenge = await _mfaService.StartLoginChallengeAsync(user.Id, cancellationToken);
-            await _twilioVerifyService.SendOtpAsync(user.MfaTarget, challenge.Code, cancellationToken);
+            var challengeResult = await _mfaService.StartLoginChallengeAsync(user.Id, cancellationToken);
+            if (challengeResult.IsFailure)
+            {
+                return BadRequest(new { success = false, message = challengeResult.Message });
+            }
+
+            var challenge = challengeResult.Value!;
+            var otpResult = await _twilioVerifyService.SendOtpAsync(user.MfaTarget ?? string.Empty, challenge.Code, cancellationToken);
+            if (otpResult.IsFailure)
+            {
+                return StatusCode(502, new { success = false, message = otpResult.Message });
+            }
+
             var tempToken = _tokenService.GenerateMfaToken(user, "login", challenge.Id.ToString());
 
             await _auditService.LogAsync(
@@ -87,7 +97,7 @@ public class AuthController : ControllerBase
                 tempToken,
                 expiresInSeconds = 300,
                 challengeId = challenge.Id.ToString(),
-                method = user.MfaMethod.ToString().ToLowerInvariant()
+                method = user.MfaMethod?.ToString().ToLowerInvariant() ?? "sms"
             });
         }
 

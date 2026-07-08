@@ -1,0 +1,22 @@
+## Build outputs
+bin/
+obj/
+artifacts/
+
+## Local databases and secrets
+*.db
+*.db-shm
+*.db-wal
+appsettings.Development.json
+secrets.json
+.env
+
+## IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+## Test results
+TestResults/
+coverage/

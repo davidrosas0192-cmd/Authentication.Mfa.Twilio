@@ -1,4 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Authentication.Mfa.Twilio.Data;
 using Authentication.Mfa.Twilio.Data.Entities;
@@ -49,8 +48,19 @@ public class MfaController : ControllerBase
             return BadRequest(new { success = false, message = "Unsupported MFA method." });
         }
 
-        var challenge = await _mfaService.StartEnrollmentChallengeAsync(user.Id, method, request, cancellationToken);
-        await _twilioVerifyService.SendOtpAsync(request.GetTarget(), challenge.Code, cancellationToken);
+        var challengeResult = await _mfaService.StartEnrollmentChallengeAsync(user.Id, method, request, cancellationToken);
+        if (challengeResult.IsFailure)
+        {
+            return BadRequest(new { success = false, message = challengeResult.Message });
+        }
+
+        var challenge = challengeResult.Value!;
+        var otpResult = await _twilioVerifyService.SendOtpAsync(request.GetTarget(), challenge.Code, cancellationToken);
+        if (otpResult.IsFailure)
+        {
+            return StatusCode(502, new { success = false, message = otpResult.Message });
+        }
+
         var tempToken = _tokenService.GenerateMfaToken(user, "enrollment", challenge.Id.ToString());
 
         return Ok(new
@@ -78,8 +88,8 @@ public class MfaController : ControllerBase
         var user = await _userService.GetByIdAsync(userId, cancellationToken);
         if (user is null) return NotFound();
 
-        var result = await _mfaService.VerifyEnrollmentAsync(user.Id, request.Code, token, cancellationToken);
-        if (!result.Success)
+        var result = await _mfaService.VerifyEnrollmentAsync(user.Id, request.Code, cancellationToken);
+        if (result.IsFailure)
         {
             await _auditService.LogAsync("mfa.enrollment.failed", "failure", user.Id.ToString(), HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString(), Request.Path, result.ErrorCode, cancellationToken);
             return BadRequest(new { success = false, message = result.Message });
@@ -102,8 +112,8 @@ public class MfaController : ControllerBase
         var user = await _userService.GetByIdAsync(userId, cancellationToken);
         if (user is null) return NotFound();
 
-        var result = await _mfaService.VerifyLoginAsync(user.Id, request.Code, token, cancellationToken);
-        if (!result.Success)
+        var result = await _mfaService.VerifyLoginAsync(user.Id, request.Code, cancellationToken);
+        if (result.IsFailure)
         {
             await _auditService.LogAsync("mfa.login.failed", "failure", user.Id.ToString(), HttpContext.Connection.RemoteIpAddress?.ToString(), Request.Headers.UserAgent.ToString(), Request.Path, result.ErrorCode, cancellationToken);
             return BadRequest(new { success = false, message = result.Message });

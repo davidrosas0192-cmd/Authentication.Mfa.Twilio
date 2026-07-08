@@ -390,7 +390,15 @@ public class LoginRequest
 
 ---
 
-## 8. Example Error Responses
+## 8. Testing and Quality Notes
+
+- Unit tests are available for the MFA service and the shared result pattern.
+- Test coverage should be extended to include Twilio failure paths, challenge expiration, and repeated attempt limits.
+- Keep the codebase aligned with dependency injection and SOLID principles.
+
+---
+
+## 9. Example Error Responses
 
 ```json
 {
