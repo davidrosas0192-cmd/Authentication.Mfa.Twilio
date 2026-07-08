@@ -33,7 +33,20 @@ The design focuses on the minimum endpoints needed for:
 
 ---
 
-## 2. Security Model
+## 2. Architecture and Repository Pattern
+
+The solution follows a service-oriented structure with clear separation between API controllers, business services, and data access. To keep the design maintainable and testable, the persistence layer should be wrapped behind a repository pattern where practical.
+
+Recommended boundaries:
+
+- Controllers handle HTTP concerns and response shaping.
+- Services implement business logic and orchestrate MFA flows.
+- Repositories expose data access contracts for entities such as users, MFA transactions, refresh tokens, and audit events.
+- EF Core remains the concrete data-store implementation behind those repositories.
+
+This keeps the domain logic independent from EF Core and makes it easier to swap the persistence layer or write focused unit tests.
+
+## 3. Security Model
 
 ### Temporary JWT Bearer Token
 

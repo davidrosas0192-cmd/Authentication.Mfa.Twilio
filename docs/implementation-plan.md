@@ -18,6 +18,7 @@ This document outlines the implementation plan for adding MFA with Twilio OTP to
 - DTOs: request/response contracts.
 - Services: auth, MFA, token, audit, and Twilio integration.
 - EF Core entities: users, MFA transactions, refresh tokens, devices, audit logs.
+- Repository pattern: persistence should be abstracted behind repository interfaces where appropriate so services depend on contracts rather than EF Core directly.
 - SQLite for local development.
 
 ## Implementation Steps
